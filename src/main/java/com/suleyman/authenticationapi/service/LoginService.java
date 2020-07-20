@@ -33,6 +33,17 @@ public class LoginService implements UserDetailsService {
     }
 
     public UserResponse getUserDetail(String username) {
-        return null;
+        Optional<User> user =userRepository.getByUsername(username);
+        if (!user.isPresent())
+            throw new UsernameNotFoundException(String.format("The username doesn't exist",username));
+        User users = user.get();
+        return UserResponse.builder()
+                .active(users.getActive())
+                .email(users.getEmail())
+                .name(users.getName())
+                .surname(users.getSurname())
+                .userName(users.getUsername())
+                .role(users.getRole())
+                .build();
     }
 }
