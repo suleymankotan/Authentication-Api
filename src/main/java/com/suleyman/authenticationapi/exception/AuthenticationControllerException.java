@@ -36,9 +36,9 @@ public class AuthenticationControllerException {
                 .build();
     }
 
-    @ExceptionHandler(AuthenticationServiceException.class)
+    @ExceptionHandler(AuthenticationServicesException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleAppException(AuthenticationServiceException exception){
+    public ErrorResponse handleAppException(AuthenticationServicesException exception){
         log.error(exception.toString());
         return ErrorResponse.builder()
                 .appName(appName)

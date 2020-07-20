@@ -5,13 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
-    private UserResponse user;
+public class UserResponse {
+    private String name;
 
-    private String token;
+    private String surname;
+
+    private String userName;
+
+    private String email;
+
+    private Integer active;
+
+    private Integer role;
 }
