@@ -1,35 +1,30 @@
 package com.suleyman.authenticationapi.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "USERS" ,schema = "USERS")
-public class User {
+@Table(name = "VerificationCode" ,schema = "USERS")
+public class VerificationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private Long userId;
 
-    private String surname;
+    private String code;
 
-    private String username;
+    private LocalDateTime createdDate;
 
-    private String password;
+    private LocalDateTime expireDate;
 
-    private Integer active;
-
-    private Integer role;
-
-    private String email;
 }

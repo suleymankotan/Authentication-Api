@@ -1,35 +1,35 @@
 package com.suleyman.authenticationapi.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "USERS" ,schema = "USERS")
-public class User {
+@Table(name = "MailSend" ,schema = "mail")
+public class MailSend {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String text;
 
-    private String surname;
+    private String subject;
 
-    private String username;
+    private String toFrom;
 
-    private String password;
+    private String mailKey;
 
-    private Integer active;
+    private Long status;
 
-    private Integer role;
+    private LocalDateTime createdDate;
 
-    private String email;
+    private LocalDateTime updateDate;
 }
