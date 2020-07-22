@@ -1,6 +1,8 @@
 package com.suleyman.authenticationapi.service;
 
 import com.suleyman.authenticationapi.entity.User;
+import com.suleyman.authenticationapi.exception.AuthenticationServicesException;
+import com.suleyman.authenticationapi.exception.ErrorCode;
 import com.suleyman.authenticationapi.model.response.UserResponse;
 import com.suleyman.authenticationapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,9 @@ public class LoginService implements UserDetailsService {
         Optional<User> user =userRepository.getByUsername(username);
         if (!user.isPresent())
             throw new UsernameNotFoundException(String.format("The username doesn't exist",username));
+        else if (user.get().getActive() == 0){
+            throw new AuthenticationServicesException(ErrorCode.USER_NOT_ACTIVE);
+        }
         else {
             User users = user.get();
             return new org.springframework.security.core.userdetails.User(users.getUsername(),users.getPassword(),new ArrayList<>());
@@ -37,6 +42,8 @@ public class LoginService implements UserDetailsService {
         if (!user.isPresent())
             throw new UsernameNotFoundException(String.format("The username doesn't exist",username));
         User users = user.get();
+        if (users.getActive() == 0 )
+            throw new AuthenticationServicesException(ErrorCode.USER_NOT_ACTIVE);
         return UserResponse.builder()
                 .active(users.getActive())
                 .email(users.getEmail())

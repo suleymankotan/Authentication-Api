@@ -4,6 +4,7 @@ import com.suleyman.authenticationapi.exception.AuthenticationServicesException;
 import com.suleyman.authenticationapi.exception.ErrorCode;
 import com.suleyman.authenticationapi.model.request.JwtRequest;
 import com.suleyman.authenticationapi.model.request.RegisterRequest;
+import com.suleyman.authenticationapi.model.request.VerificationRequest;
 import com.suleyman.authenticationapi.model.response.BaseResponse;
 import com.suleyman.authenticationapi.model.response.LoginResponse;
 import com.suleyman.authenticationapi.model.response.UserResponse;
@@ -27,10 +28,6 @@ public class LoginController {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    @PostMapping("/hello")
-    public String hello(){
-        return "hello word";
-    }
 
     @PostMapping("/login")
     public LoginResponse authenticationToken(@RequestBody @Valid JwtRequest request){
@@ -40,6 +37,11 @@ public class LoginController {
     @PostMapping("/register")
     public BaseResponse register(@RequestBody @Valid RegisterRequest registerRequest){
         return registerService.register(registerRequest);
+    }
+
+    @PostMapping("/register/active")
+    public BaseResponse registerActive(@RequestBody @Valid VerificationRequest registerRequest){
+        return registerService.registerActive(registerRequest);
     }
 
     @GetMapping("/user/{userName}")
