@@ -1,9 +1,12 @@
 package com.suleyman.authenticationapi.service;
 
 import com.suleyman.authenticationapi.entity.User;
+import com.suleyman.authenticationapi.entity.UserLog;
 import com.suleyman.authenticationapi.exception.AuthenticationServicesException;
 import com.suleyman.authenticationapi.exception.ErrorCode;
+import com.suleyman.authenticationapi.model.request.JwtRequest;
 import com.suleyman.authenticationapi.model.response.UserResponse;
+import com.suleyman.authenticationapi.repository.UserLogRepository;
 import com.suleyman.authenticationapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -21,6 +26,7 @@ import java.util.Optional;
 public class LoginService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserLogRepository userLogRepository;
 
 
     @Override
@@ -53,4 +59,14 @@ public class LoginService implements UserDetailsService {
                 .role(users.getRole())
                 .build();
     }
+    public void tokenLogger(UserResponse userResponse, String token, String remoteAddr){
+       userLogRepository.save(UserLog.builder()
+               .user_id(userRepository.getByUsername(userResponse.getUserName()).get().getId())
+               .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
+               .token(token)
+               .Ip(remoteAddr)
+               .build());
+
+    }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
@@ -30,8 +31,8 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public LoginResponse authenticationToken(@RequestBody @Valid JwtRequest request){
-        return login(request);
+    public LoginResponse authenticationToken(@RequestBody @Valid JwtRequest request, HttpServletRequest httpServletRequest){
+        return login(request,httpServletRequest);
     }
 
     @PostMapping("/register")
@@ -49,11 +50,12 @@ public class LoginController {
         return loginService.getUserDetail(username);
     }
 
-    private LoginResponse login(JwtRequest request) {
+    private LoginResponse login(JwtRequest request, HttpServletRequest httpServletRequest) {
         auth(request.getUsername(),request.getPassword());
         final UserDetails userDetails = loginService.loadUserByUsername(request.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
         UserResponse userResponse = getUserDetails(request.getUsername());
+        loginService.tokenLogger(userResponse,token,httpServletRequest.getRemoteAddr());
         return LoginResponse.builder().user(userResponse).token(token).build();
     }
 

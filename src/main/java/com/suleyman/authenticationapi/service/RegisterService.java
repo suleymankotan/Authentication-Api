@@ -56,6 +56,7 @@ public class RegisterService {
                 .expireDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .userId(users.getId())
                 .code(code)
+                .active(1L)
                 .build());
 
         mailSendRepository.save(MailSend.builder()
@@ -63,8 +64,8 @@ public class RegisterService {
                 .status(1L)
                 .subject("Active Code")
                 .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
-                .toFrom(users.getEmail())
-                .text("<p>Code: </p>"+ code)
+                .To_C(users.getEmail())
+                .text("<p>Code:</p>"+ code)
                 .build());
 
         return BaseResponse.success();
@@ -79,6 +80,8 @@ public class RegisterService {
         User user=userRepository.getById(verificationCode.getUserId());
         user.setActive(1);
         userRepository.save(user);
+        verificationCode.setActive(2L);
+        verificationCodeRepository.save(verificationCode);
 
 
         return BaseResponse.success();

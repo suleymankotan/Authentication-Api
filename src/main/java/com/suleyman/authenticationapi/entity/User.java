@@ -14,9 +14,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "USERS" ,schema = "USERS")
+@SequenceGenerator(name = "usersIdSeq",schema = "USERS",sequenceName = "USERS.USERS_ID_SEQ",allocationSize = 1)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "usersIdSeq")
     private Long id;
 
     private String name;

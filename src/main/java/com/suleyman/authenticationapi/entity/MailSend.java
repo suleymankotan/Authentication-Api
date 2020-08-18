@@ -14,16 +14,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "MailSend" ,schema = "mail")
+@SequenceGenerator(name = "mailIdSeq",schema = "mail",sequenceName = "mail.mail_SEND_ID_SEQ",allocationSize = 1)
 public class MailSend {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "mailIdSeq")
     private Long id;
 
     private String text;
 
     private String subject;
 
-    private String toFrom;
+    private String To_C;
 
     private String mailKey;
 
