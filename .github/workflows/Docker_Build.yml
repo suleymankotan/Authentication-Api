@@ -59,9 +59,9 @@ jobs:
         run: |
           gcloud container clusters get-credentials prod --zone us-west3-c --project ${{ secrets.GKE_STAGING_PROJECT }}
           cd kustomize/
-          kustomize edit add secret authentication-api --from-literal=DB_URL=${{ secrets.DB_URL }}
-          kustomize edit add secret authentication-api --from-literal=DB_USER=${{ secrets.DB_USER }}
-          kustomize edit add secret authentication-api --from-literal=DB_PASS=${{ secrets.DB_PASS }}
+          kustomize edit add secret authentication-api --from-literal=DBURL=${{ secrets.DB_URL }}
+          kustomize edit add secret authentication-api --from-literal=DBUSER=${{ secrets.DB_USER }}
+          kustomize edit add secret authentication-api --from-literal=DBPASS=${{ secrets.DB_PASS }}
           kustomize edit set image gateway-api=eu.gcr.io/${{ secrets.GKE_STAGING_PROJECT }}/authentication-api:${{ github.sha }}
           kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/gateway-api
