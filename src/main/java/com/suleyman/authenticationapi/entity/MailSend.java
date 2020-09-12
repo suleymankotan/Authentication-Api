@@ -28,7 +28,7 @@ public class MailSend {
 
     private String mailKey;
 
-    private Long status;
+    private Integer status;
 
     private LocalDateTime createdDate;
 

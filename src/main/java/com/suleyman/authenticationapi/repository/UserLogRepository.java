@@ -1,7 +1,7 @@
 package com.suleyman.authenticationapi.repository;
 
-import com.suleyman.authenticationapi.entity.UserLog;
+import com.suleyman.authenticationapi.entity.UserTokenLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserLogRepository extends JpaRepository<UserLog,Long> {
+public interface UserLogRepository extends JpaRepository<UserTokenLog,Long> {
 }

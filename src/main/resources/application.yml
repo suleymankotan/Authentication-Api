@@ -22,7 +22,7 @@ spring:
       connection-timeout: 10000
       minimum-idle: 2
       idle-timeout: 10000
-    url: ${DB_URL:jdbc:postgresql://testdb.c123lyxq7he8.eu-central-1.rds.amazonaws.com:5432/prod}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/prod}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:2425848000a.}
 

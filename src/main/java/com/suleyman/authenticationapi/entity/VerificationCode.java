@@ -28,6 +28,6 @@ public class VerificationCode {
 
     private LocalDateTime expireDate;
 
-    private Long active;
+    private Integer active;
 
 }
