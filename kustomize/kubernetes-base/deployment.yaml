@@ -18,18 +18,18 @@ spec:
         - name: authentication-api
           image: authentication-api
           env:
-            - name: DBURL
+            - name: dburl
               valueFrom:
                 secretKeyRef:
-                  key: DBURL
-            - name: DBUSER
+                  key: dburl
+            - name: dbuser
               valueFrom:
                 secretKeyRef:
-                  key: DBUSER
-            - name: DBPASS
+                  key: dbuser
+            - name: dbpass
               valueFrom:
                 secretKeyRef:
-                  key: DBPASS
+                  key: dbpass
           resources:
             requests:
               memory: 500Mi
