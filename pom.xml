@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.suleyman</groupId>
 	<artifactId>authentication-api</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>authentication-api</name>
 	<description>Demo project for Spring Boot</description>
 
