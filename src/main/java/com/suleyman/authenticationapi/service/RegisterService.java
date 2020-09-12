@@ -8,6 +8,9 @@ import com.suleyman.authenticationapi.exception.ErrorCode;
 import com.suleyman.authenticationapi.model.request.RegisterRequest;
 import com.suleyman.authenticationapi.model.request.VerificationRequest;
 import com.suleyman.authenticationapi.model.response.BaseResponse;
+import com.suleyman.authenticationapi.model.statuEnum.CodeEnum;
+import com.suleyman.authenticationapi.model.statuEnum.RoleEnum;
+import com.suleyman.authenticationapi.model.statuEnum.UserStatusEnum;
 import com.suleyman.authenticationapi.repository.MailSendRepository;
 import com.suleyman.authenticationapi.repository.UserRepository;
 import com.suleyman.authenticationapi.repository.VerificationCodeRepository;
@@ -35,17 +38,17 @@ public class RegisterService {
             throw new AuthenticationServicesException(ErrorCode.GENERAL_EXCEPTION);
 
         User users = userRepository.save(User.builder()
-                .active(0)
+                .active(UserStatusEnum.NO_ACTIVE_USER.getCode())
                 .email(registerRequest.getEmail())
                 .name(registerRequest.getName())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(0)
+                .role(RoleEnum.USER.getCode())
                 .surname(registerRequest.getSurname())
                 .username(registerRequest.getUsername())
                 .build());
 
         while (true){
-            code=String.valueOf((Math.random() * 7 * 212* 10 ) /2);
+            code=String.valueOf((int)(Math.random() * 7 * 212* 10 ) /2);
             VerificationCode verificationCode = verificationCodeRepository.getByCode(code);
             if (verificationCode == null)
                 break;
@@ -56,12 +59,12 @@ public class RegisterService {
                 .expireDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .userId(users.getId())
                 .code(code)
-                .active(1L)
+                .active(CodeEnum.NOT_SUCCESS.getCode())
                 .build());
 
         mailSendRepository.save(MailSend.builder()
                 .mailKey("NO-REPLY")
-                .status(1L)
+                .status(CodeEnum.NOT_SUCCESS.getCode())
                 .subject("Active Code")
                 .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .To_C(users.getEmail())
@@ -78,9 +81,9 @@ public class RegisterService {
 
 
         User user=userRepository.getById(verificationCode.getUserId());
-        user.setActive(1);
+        user.setActive(UserStatusEnum.ACTIVE_USER.getCode());
         userRepository.save(user);
-        verificationCode.setActive(2L);
+        verificationCode.setActive(CodeEnum.SUCCESS.getCode());
         verificationCodeRepository.save(verificationCode);
 
 

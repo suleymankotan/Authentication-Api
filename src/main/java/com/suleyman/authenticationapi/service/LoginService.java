@@ -1,72 +1,46 @@
 package com.suleyman.authenticationapi.service;
 
-import com.suleyman.authenticationapi.entity.User;
-import com.suleyman.authenticationapi.entity.UserLog;
 import com.suleyman.authenticationapi.exception.AuthenticationServicesException;
 import com.suleyman.authenticationapi.exception.ErrorCode;
+import com.suleyman.authenticationapi.model.request.JwtRequest;
+import com.suleyman.authenticationapi.model.response.LoginResponse;
 import com.suleyman.authenticationapi.model.response.UserResponse;
-import com.suleyman.authenticationapi.repository.UserLogRepository;
-import com.suleyman.authenticationapi.repository.UserRepository;
+import com.suleyman.authenticationapi.tokenconfig.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LoginService implements UserDetailsService {
+public class LoginService {
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
 
-    private final UserRepository userRepository;
-    private final UserLogRepository userLogRepository;
+    public LoginResponse login(JwtRequest request, HttpServletRequest httpServletRequest) {
+        auth(request.getUsername(),request.getPassword());
+        final UserDetails userDetails = userService.loadUserByUsername(request.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        UserResponse userResponse = userService.getUserDetail(request.getUsername());
+        userService.tokenLogger(userResponse,token,httpServletRequest.getRemoteAddr(), Instant.ofEpochMilli(jwtTokenUtil.getExpirationDateFromToken(token).getTime()).atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime());
+        return LoginResponse.builder().user(userResponse).token(token).build();
+    }
 
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user =userRepository.getByUsername(username);
-        if (!user.isPresent())
-            throw new UsernameNotFoundException(String.format("The username doesn't exist",username));
-        else if (user.get().getActive() == 0){
-            throw new AuthenticationServicesException(ErrorCode.USER_NOT_ACTIVE);
+    private void auth(String username, String password) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+        }catch (DisabledException | BadCredentialsException exception){
+            throw new AuthenticationServicesException(ErrorCode.USER_OR_PASSWORD_NOT_CORRECT);
         }
-        else {
-            User users = user.get();
-            return new org.springframework.security.core.userdetails.User(users.getUsername(),users.getPassword(),new ArrayList<>());
-        }
     }
-
-    public UserResponse getUserDetail(String username) {
-        Optional<User> user =userRepository.getByUsername(username);
-        if (!user.isPresent())
-            throw new UsernameNotFoundException(String.format("The username doesn't exist",username));
-        User users = user.get();
-        if (users.getActive() == 0 )
-            throw new AuthenticationServicesException(ErrorCode.USER_NOT_ACTIVE);
-        return UserResponse.builder()
-                .active(users.getActive())
-                .email(users.getEmail())
-                .name(users.getName())
-                .surname(users.getSurname())
-                .userName(users.getUsername())
-                .role(users.getRole())
-                .build();
-    }
-    public void tokenLogger(UserResponse userResponse, String token, String remoteAddr,LocalDateTime expireDate){
-       userLogRepository.save(UserLog.builder()
-               .user_id(userRepository.getByUsername(userResponse.getUserName()).get().getId())
-               .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
-               .token(token)
-               .Ip(remoteAddr)
-               .expireDate(expireDate)
-               .build());
-
-    }
-
 }

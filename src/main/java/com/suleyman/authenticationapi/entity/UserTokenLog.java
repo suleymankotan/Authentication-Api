@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "USERLOG" ,schema = "USERS")
-@SequenceGenerator(name = "users_log",schema = "USERS",sequenceName = "USERS.USERS_LOG_ID_SEQ",allocationSize = 1)
-public class UserLog {
+@Table(name = "USERTOKENLOG" ,schema = "USERS")
+@SequenceGenerator(name = "users_token_log",schema = "USERS",sequenceName = "USERS.USERS_TOKEN_LOG_ID_SEQ",allocationSize = 1)
+public class UserTokenLog {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator ="users_log")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator ="users_token_log")
     private Long id;
 
     private Long user_id;

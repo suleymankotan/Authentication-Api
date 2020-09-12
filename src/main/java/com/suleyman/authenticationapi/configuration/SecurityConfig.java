@@ -1,6 +1,6 @@
 package com.suleyman.authenticationapi.configuration;
 
-import com.suleyman.authenticationapi.service.LoginService;
+import com.suleyman.authenticationapi.service.UserService;
 import com.suleyman.authenticationapi.tokenconfig.JwtAuthenticationEntryPoint;
 import com.suleyman.authenticationapi.tokenconfig.JwtRequestFilter;
 import lombok.AllArgsConstructor;
@@ -26,12 +26,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final LoginService loginService;
+    private final UserService userService;
     private final JwtRequestFilter jwtRequestFilter;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder)throws Exception{
-        authenticationManagerBuilder.userDetailsService(loginService).passwordEncoder(passwordEncoder());
+        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
     @Bean
     public PasswordEncoder passwordEncoder(){

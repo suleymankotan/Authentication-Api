@@ -18,6 +18,7 @@ public class AuthenticationServicesException extends  RuntimeException {
         this.code= code;
         this.message= message;
     }
+
     public AuthenticationServicesException(ErrorCode exceptionEnum){
         super();
         this.code= exceptionEnum.getNumber();

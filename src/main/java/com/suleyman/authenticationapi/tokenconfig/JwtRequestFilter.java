@@ -1,6 +1,6 @@
 package com.suleyman.authenticationapi.tokenconfig;
 
-import com.suleyman.authenticationapi.service.LoginService;
+import com.suleyman.authenticationapi.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
-
-    private final LoginService loginService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -41,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
         if (username!= null&& SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails =this.loginService.loadUserByUsername(username);
+            UserDetails userDetails =this.userService.loadUserByUsername(username);
             if (jwtTokenUtil.validateToken(jwtToken,userDetails)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 
