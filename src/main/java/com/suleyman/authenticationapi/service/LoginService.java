@@ -4,7 +4,6 @@ import com.suleyman.authenticationapi.entity.User;
 import com.suleyman.authenticationapi.entity.UserLog;
 import com.suleyman.authenticationapi.exception.AuthenticationServicesException;
 import com.suleyman.authenticationapi.exception.ErrorCode;
-import com.suleyman.authenticationapi.model.request.JwtRequest;
 import com.suleyman.authenticationapi.model.response.UserResponse;
 import com.suleyman.authenticationapi.repository.UserLogRepository;
 import com.suleyman.authenticationapi.repository.UserRepository;
@@ -59,12 +58,13 @@ public class LoginService implements UserDetailsService {
                 .role(users.getRole())
                 .build();
     }
-    public void tokenLogger(UserResponse userResponse, String token, String remoteAddr){
+    public void tokenLogger(UserResponse userResponse, String token, String remoteAddr,LocalDateTime expireDate){
        userLogRepository.save(UserLog.builder()
                .user_id(userRepository.getByUsername(userResponse.getUserName()).get().getId())
                .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                .token(token)
                .Ip(remoteAddr)
+               .expireDate(expireDate)
                .build());
 
     }

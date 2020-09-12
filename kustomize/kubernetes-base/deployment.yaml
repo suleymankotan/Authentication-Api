@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-api
+  labels:
+    app: authentication-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication-api
+  template:
+    metadata:
+      labels:
+        app: authentication-api
+    spec:
+      containers:
+        - name: authentication-api
+          image: authentication-api
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  key: DB_URL
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASS
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: 300m
+            limits:
+              memory: 750Mi
+              cpu: 450m
+          ports:
+            - containerPort: 8010
+          readinessProbe:
+            httpGet:
+              port: 8010
+              path: /actuator/health
+            periodSeconds: 200
+            timeoutSeconds: 200
+          livenessProbe:
+            httpGet:
+              port: 8010
+              path: /actuator/health
+            periodSeconds: 200
+            timeoutSeconds: 200

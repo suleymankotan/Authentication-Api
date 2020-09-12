@@ -29,4 +29,6 @@ public class UserLog {
     private String Ip;
 
     private LocalDateTime createdDate;
+
+    private LocalDateTime expireDate;
 }

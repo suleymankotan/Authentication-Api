@@ -7,12 +7,12 @@ on:
     branches: [master]
 
 jobs:
-  Build:
-    name: Build - Docker Hub Push & GitHub Docker Packages Push
-    runs-on: ubuntu-18.04
+  setup-build-publish-deploy:
+    name: Staging Pipeline
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up JDK 8
         uses: actions/setup-java@v1
         with:
@@ -32,3 +32,37 @@ jobs:
       - name: Docker Hub logout
         run: docker logout
 
+      - name: Setup GCP CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.GKE_STAGING_EMAIL }}
+          service_account_key: ${{ secrets.GKE_STAGING_KEY }}
+
+      - run: |
+          gcloud auth configure-docker
+
+      - name: Build Docker
+        run: |
+          docker build -t eu.gcr.io/${{ secrets.GKE_STAGING_PROJECT }}/authentication-api:${{ github.sha }} \
+           --build-arg GITHUB_SHA=${{ github.sha }}  .
+      - name: Publish
+        run: |
+          docker push eu.gcr.io/${{ secrets.GKE_STAGING_PROJECT }}/authentication-api:${{ github.sha }}
+
+      - name: Set up Kustomize
+        run: |
+          curl -fsSL kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+
+      - name: Deploy
+        run: |
+          gcloud container clusters get-credentials prod --zone us-west3-c --project ${{ secrets.GKE_STAGING_PROJECT }}
+          cd kustomize/
+          kustomize edit add secret authentication-api --from-literal=DB_URL=${{ secrets.DB_URL }}
+          kustomize edit add secret authentication-api --from-literal=DB_USER=${{ secrets.DB_USER }}
+          kustomize edit add secret authentication-api --from-literal=DB_PASS=${{ secrets.DB_PASS }}
+          kustomize edit set image gateway-api=eu.gcr.io/${{ secrets.GKE_STAGING_PROJECT }}/authentication-api:${{ github.sha }}
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/gateway-api
+          kubectl get services -o wide

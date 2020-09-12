@@ -45,7 +45,7 @@ public class RegisterService {
                 .build());
 
         while (true){
-            code=String.valueOf((int) (Math.random() * 7 * 212* 10 ) /2);
+            code=String.valueOf((Math.random() * 7 * 212* 10 ) /2);
             VerificationCode verificationCode = verificationCodeRepository.getByCode(code);
             if (verificationCode == null)
                 break;

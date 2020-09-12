@@ -12,16 +12,23 @@ import com.suleyman.authenticationapi.service.LoginService;
 import com.suleyman.authenticationapi.service.RegisterService;
 import com.suleyman.authenticationapi.tokenconfig.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.Instant;
+import java.time.ZoneId;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/auth")
+@Slf4j
 public class LoginController {
     private final LoginService loginService;
     private final AuthenticationManager authenticationManager;
@@ -55,7 +62,7 @@ public class LoginController {
         final UserDetails userDetails = loginService.loadUserByUsername(request.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
         UserResponse userResponse = getUserDetails(request.getUsername());
-        loginService.tokenLogger(userResponse,token,httpServletRequest.getRemoteAddr());
+        loginService.tokenLogger(userResponse,token,httpServletRequest.getRemoteAddr(), Instant.ofEpochMilli(jwtTokenUtil.getExpirationDateFromToken(token).getTime()).atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime());
         return LoginResponse.builder().user(userResponse).token(token).build();
     }
 
