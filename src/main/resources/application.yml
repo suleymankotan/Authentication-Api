@@ -22,8 +22,8 @@ spring:
       connection-timeout: 10000
       minimum-idle: 2
       idle-timeout: 10000
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/prod}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres}
     username: ${DB_USER:postgres}
-    password: ${DB_PASS:2425848000a.}
+    password: ${DB_PASS:Testdb01.}
 
 jwt.secret: suleymankotan

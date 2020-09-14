@@ -49,14 +49,13 @@ public class RegisterService {
 
         while (true){
             code=String.valueOf((int)(Math.random() * 7 * 212* 10 ) /2);
-            VerificationCode verificationCode = verificationCodeRepository.getByCode(code);
+            VerificationCode verificationCode = verificationCodeRepository.getByCodeAndActive(code,CodeEnum.NOT_SUCCESS.getCode());
             if (verificationCode == null)
                 break;
         }
 
         verificationCodeRepository.save(VerificationCode.builder()
                 .createdDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
-                .expireDate(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .userId(users.getId())
                 .code(code)
                 .active(CodeEnum.NOT_SUCCESS.getCode())
@@ -75,7 +74,7 @@ public class RegisterService {
     }
 
     public BaseResponse registerActive(VerificationRequest registerRequest) {
-        VerificationCode verificationCode= verificationCodeRepository.getByCode(registerRequest.getCode());
+        VerificationCode verificationCode= verificationCodeRepository.getByCodeAndActive(registerRequest.getCode(),CodeEnum.NOT_SUCCESS.getCode());
         if (verificationCode == null)
             throw new AuthenticationServicesException(ErrorCode.NO_RECORDS_FOUND);
 

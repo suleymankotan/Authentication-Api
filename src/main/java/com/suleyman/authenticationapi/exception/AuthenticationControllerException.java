@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +40,17 @@ public class AuthenticationControllerException {
     @ExceptionHandler(AuthenticationServicesException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleAppException(AuthenticationServicesException exception){
+        log.error(exception.toString());
+        return ErrorResponse.builder()
+                .appName(appName)
+                .code(exception.getCode())
+                .message(exception.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleAppLoginException(AuthenticationServicesException exception){
         log.error(exception.toString());
         return ErrorResponse.builder()
                 .appName(appName)
