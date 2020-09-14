@@ -5,7 +5,6 @@ import com.suleyman.authenticationapi.model.request.VerificationRequest;
 import com.suleyman.authenticationapi.model.response.BaseResponse;
 import com.suleyman.authenticationapi.service.RegisterService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/auth")
-@Slf4j
 public class RegisterController {
     private final RegisterService registerService;
 
